@@ -6,7 +6,7 @@ import torch
 from environment.base import Base
 import time
 
-delay = 1
+delay = 0.51
 
 
 class AnimatedScatter(object):

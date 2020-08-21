@@ -83,7 +83,7 @@ class Base:
                 pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
             rotation = rotation - 3//2
         else:
-            rotation = np.random.randint(low=0, high=3, size=self.n_blobs) - 3//2
+            rotation = np.random.randint(low=0, high=3, size=self.n_blobs) - 5//2
             # jump = np.random.random(size=self.n_blobs) * self.jump_strength
             pick_drop = np.random.randint(low=0, high=3, size=self.n_blobs)
             pheromones = np.random.randint(low=0, high=self.n_pheromones, size=self.n_blobs)

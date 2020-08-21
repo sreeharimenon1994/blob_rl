@@ -20,9 +20,9 @@ class Agent:
         self.gamma = gamma
         self.input_size = 130 * n_prev
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model = Model(input_size=self.input_size, rotation=1,\
+        self.model = Model(input_size=self.input_size, rotation=5,\
                            n_pheromones=self.n_pheromones, batch_size=batch_size)
-        self.target = Model(input_size=self.input_size, rotation=1,\
+        self.target = Model(input_size=self.input_size, rotation=5,\
                            n_pheromones=self.n_pheromones, batch_size=batch_size)
         try:
             model_params = torch.load(model_path, map_location=self.device)
@@ -58,8 +58,9 @@ class Agent:
 
         rotation, pheromone, pickup_drop = self.model.forward(state_batch)
 
+        rotation = rotation[self.batch_list, action_batch[:, 0]].reshape(-1, 1)
+        pickup_drop = pickup_drop[self.batch_list, action_batch[:, 1]].reshape(-1, 1)
         pheromone = pheromone[self.batch_list, action_batch[:, 2]].reshape(-1, 1)
-        pickup_drop = pickup_drop[self.batch_list, action_batch[:, 2]].reshape(-1, 1)
 
         rotation_t, pheromone_t, pickup_drop_t = self.target.forward(new_state_batch)
         rotation_t, pheromone_t, pickup_drop_t = rotation_t.detach().clone(),\
@@ -67,6 +68,7 @@ class Agent:
                                                          pickup_drop_t.detach().clone()
 
         pheromone_t = torch.max(pheromone_t, dim=1)[0].reshape(-1, 1)
+        rotation_t = torch.max(rotation_t, dim=1)[0].reshape(-1, 1)
         pickup_drop_t = torch.max(pickup_drop_t, dim=1)[0].reshape(-1, 1)
         
         rotation_t[done_batch] = 0.0
@@ -103,7 +105,8 @@ class Agent:
 
     def save_model(self, temp=False, i=0):
         if temp:
-            torch.save(self.model.state_dict(), 'model/temp/model_'+str(i)+'.pt')
+            # torch.save(self.model.state_dict(), 'model/temp/model_'+str(i)+'.pt')
+            pass
         else:
             torch.save(self.model.state_dict(), 'model/model.pt')
 
