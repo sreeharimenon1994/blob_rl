@@ -74,13 +74,15 @@ class Base:
     def choose_action(self, state):
         if np.random.random() > self.agent.epsilon:
             state = torch.tensor(state).to(self.agent.device)
-            rotation, pheromones, jump, pick_drop = self.agent.target.forward(state)
-            rotation = rotation.detach().cpu().numpy().reshape(1, -1)
-            jump = jump.detach().cpu().numpy().reshape(1, -1)
-            pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
-            pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
+            with torch.no_grad():
+                rotation, pheromones, jump, pick_drop = self.agent.target.forward(state)
+                rotation = (torch.argmax(rotation, dim=1).detach().cpu().numpy()).ravel() 
+                jump = jump.detach().cpu().numpy().reshape(1, -1)
+                pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
+                pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
+            rotation = rotation - 3//2
         else:
-            rotation = np.random.random(size=self.n_blobs)
+            rotation = np.random.randint(low=0, high=3, size=self.n_blobs) - 3//2
             jump = np.random.random(size=self.n_blobs) * self.jump_strength
             pick_drop = np.random.randint(low=0, high=3, size=self.n_blobs)
             pheromones = np.random.randint(low=0, high=self.n_pheromones, size=self.n_blobs)
@@ -94,7 +96,7 @@ class Base:
         state = self.observation.copy()
         rotation, jump, pick_drop, pheromones = self.choose_action(state)
         self.blobs.xyfa[:, 1, 1] = pick_drop
-        self.blobs.update_pos(rotation=rotation, jump=jump)
+        self.blobs.update_pos(rotation=rotation * 0.16355283, jump=jump)
         self.blobs.update_pheromones(pheromones=pheromones)
 
         self.observation_aggregate()

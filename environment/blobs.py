@@ -42,8 +42,10 @@ class Blobs:
         return arr
 
     def update_pos(self, rotation, jump):
-        self.rotation = rotation
-        self.jump = jump
+        self.rotation += rotation.reshape(-1, 1)
+        # self.jump = jump
+        jump = 1.0
+        # self.jump = 1.0
         x, y = (jump * np.cos(rotation * 2 * np.pi),\
                 jump * np.sin(rotation * 2 * np.pi))
 

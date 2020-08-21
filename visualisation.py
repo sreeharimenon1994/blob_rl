@@ -6,7 +6,7 @@ import torch
 from environment.base import Base
 import time
 
-delay = 0.001
+delay = 1
 
 
 class AnimatedScatter(object):
@@ -41,6 +41,7 @@ class AnimatedScatter(object):
         phero_color = [0.01, 0.5, 0.99]
         # c = [.150, .50]
         self.base.observation_aggregate()
+        ind = 0
         while True:
             self.base.step()
             time.sleep(delay)
@@ -48,6 +49,9 @@ class AnimatedScatter(object):
             xy = self.base.blobs.visualise_blobs()
             s = np.ones(self.numpoints) * 100.0
             c = np.ones(self.numpoints) * .25
+
+            if ind % 50000 == 0:
+                print(self.base.food.xy.sum())
 
             tmp = self.base.food.visualise_food()
             xy = np.append(xy, (np.dstack((tmp[0], tmp[1])))[0] + 0.1, axis=0)
@@ -89,7 +93,7 @@ if __name__ == '__main__':
                 w=cfg['main']['width'], h=cfg['main']['height'], batch_size=cfg['main']['batch_size'],\
                 n_blobs=cfg['main']['n_blobs'], n_pheromones=cfg['base']['n_pheromones'], visualise=False,\
                 n_steps=cfg["main"]["n_steps"], model_path=model_path, n_prev=cfg['base']['n_prev'])
-    
+
     base.setup()
     model = torch.load('model/model.pt', map_location=torch.device('cpu'))
     base.agent.model.load_state_dict(model)
