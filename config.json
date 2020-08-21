@@ -1,6 +1,6 @@
 {
     "main": {
-        "epochs": 2,
+        "epochs": 50,
         "n_steps": 2000,
         "width": 50,
         "height": 50,
