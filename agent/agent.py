@@ -56,35 +56,34 @@ class Agent:
         reward_batch = torch.tensor(reward_batch).to(self.device)
         done_batch = torch.tensor(done_batch).to(self.device)
 
-        rotation, pheromone, jump, pickup_drop = self.model.forward(state_batch)
+        rotation, pheromone, pickup_drop = self.model.forward(state_batch)
 
-        pheromone = pheromone[self.batch_list, action_batch[:, 3]].reshape(-1, 1)
+        pheromone = pheromone[self.batch_list, action_batch[:, 2]].reshape(-1, 1)
         pickup_drop = pickup_drop[self.batch_list, action_batch[:, 2]].reshape(-1, 1)
 
-        rotation_t, pheromone_t, jump_t, pickup_drop_t = self.target.forward(new_state_batch)
-        rotation_t, pheromone_t, jump_t, pickup_drop_t = rotation_t.detach().clone(),\
+        rotation_t, pheromone_t, pickup_drop_t = self.target.forward(new_state_batch)
+        rotation_t, pheromone_t, pickup_drop_t = rotation_t.detach().clone(),\
                                                          pheromone_t.detach().clone(),\
-                                                         jump_t.detach().clone(),\
                                                          pickup_drop_t.detach().clone()
 
         pheromone_t = torch.max(pheromone_t, dim=1)[0].reshape(-1, 1)
         pickup_drop_t = torch.max(pickup_drop_t, dim=1)[0].reshape(-1, 1)
         
         rotation_t[done_batch] = 0.0
-        jump_t[done_batch] = 0.0
+        # jump_t[done_batch] = 0.0
         pheromone_t[done_batch] = 0.0
         pickup_drop_t[done_batch] = 0.0
 
         rotation_t = reward_batch + rotation_t * self.gamma
-        jump_t = reward_batch + jump_t * self.gamma
+        # jump_t = reward_batch + jump_t * self.gamma
         pheromone_t = reward_batch + pheromone_t * self.gamma
         pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
 
         loss_1 = self.criterion_1(rotation, rotation_t)
         loss_2 = self.criterion_1(pheromone, pheromone_t)
-        loss_3 = self.criterion_1(jump, jump_t)
+        # loss_3 = self.criterion_1(jump, jump_t)
         loss_4 = self.criterion_1(pickup_drop, pickup_drop_t)
-        loss = loss_1 + loss_2 + loss_3 + loss_4
+        loss = loss_1 + loss_2 + loss_4
         self.optimizer.zero_grad()
         loss.backward()
         self.reward_mean = torch.mean(reward_batch)

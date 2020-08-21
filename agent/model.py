@@ -6,7 +6,7 @@ class Model(nn.Module):
         super(Model, self).__init__()
         power = 5
 
-        total_outs = [rotation, n_pheromones, 1, 3] # rot, phe, jump, pick
+        total_outs = [rotation, n_pheromones, 3] # rot, phe, pick
 
         self.general = nn.Sequential(
                 nn.Linear(input_size, 2**(4 + power)),
