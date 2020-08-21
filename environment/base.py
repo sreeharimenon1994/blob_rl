@@ -98,7 +98,7 @@ class Base:
         # rotation, jump, pick_drop, pheromones = self.choose_action(state)
         rotation, pick_drop, pheromones = self.choose_action(state)
         self.blobs.xyfa[:, 1, 1] = pick_drop
-        self.blobs.update_pos(rotation=rotation * 0.25, jump=1)
+        self.blobs.update_pos(rotation=rotation * 0.125, jump=1)
         self.blobs.update_pheromones(pheromones=pheromones)
 
         self.observation_aggregate()
