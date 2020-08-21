@@ -18,7 +18,7 @@ class Blobs:
         self.extra = np.ones([self.n_blobs, 2], dtype=np.float) 
         # self.xy = np.zeros([self.w, self.h], dtype=np.int)
         # self.xy = np.pad(self.xy, int(padding/2), 'constant', constant_values=-1)
-        self.rotation = np.random.random((self.n_blobs, 1))
+        self.rotation = np.zeros(self.n_blobs)
         self.jump = np.ones((self.n_blobs, 1))
         self.pheromones = []
         self.restricted_area = Restricted_Area(w=self.w, h=self.h)
@@ -42,7 +42,7 @@ class Blobs:
         return arr
 
     def update_pos(self, rotation, jump):
-        self.rotation += rotation.reshape(-1, 1)
+        self.rotation += rotation
         # self.jump = jump
         jump = 1.0
         # self.jump = 1.0
@@ -51,7 +51,7 @@ class Blobs:
 
         x1 = (self.xyfa[:, 0, 0] + x).round()
         y1 = (self.xyfa[:, 0, 1] + y).round()
-        # print(x1, y1, '------->', x, y, '---------->', rotation, jump)
+        # print(x1.shape, y1.shape, '------->', x.shape, y.shape, '---------->', rotation, jump)
         x1[x1 < 0] = 0
         y1[y1 < 0] = 0
         x1[x1 > self.h - 1] = self.h - 1
