@@ -6,7 +6,7 @@ import torch
 from environment.base import Base
 import time
 
-delay = 0.51
+delay = 0.02
 
 
 class AnimatedScatter(object):
@@ -78,25 +78,25 @@ class AnimatedScatter(object):
 
 
 
-if __name__ == '__main__':
-    with open("config.json") as f:
-        cfg = json.load(f)
-        print('\n\n', cfg, '\n')
-        cfg['base']['epsilon'] = 3.1
-        cfg['base']['eps_dec'] = .5
-        cfg['main']['n_steps'] = 200000
-        f.close()
+# if __name__ == '__main__':
+with open("config.json") as f:
+    cfg = json.load(f)
+    print('\n\n', cfg, '\n')
+    cfg['base']['epsilon'] = 3.1
+    cfg['base']['eps_dec'] = .5
+    cfg['main']['n_steps'] = 200000
+    f.close()
 
-    model_path = 'model/model.pt'
-    base = Base(epsilon=cfg['base']['epsilon'], eps_dec=cfg['base']['eps_dec'], padding=cfg['main']['padding'],\
-                eps_min=cfg['base']['eps_min'], lr=cfg['base']['lr'], gamma=cfg['base']['gamma'],\
-                w=cfg['main']['width'], h=cfg['main']['height'], batch_size=cfg['main']['batch_size'],\
-                n_blobs=cfg['main']['n_blobs'], n_pheromones=cfg['base']['n_pheromones'], visualise=False,\
-                n_steps=cfg["main"]["n_steps"], model_path=model_path, n_prev=cfg['base']['n_prev'])
+model_path = 'model/model.pt'
+base = Base(epsilon=cfg['base']['epsilon'], eps_dec=cfg['base']['eps_dec'], padding=cfg['main']['padding'],\
+            eps_min=cfg['base']['eps_min'], lr=cfg['base']['lr'], gamma=cfg['base']['gamma'],\
+            w=cfg['main']['width'], h=cfg['main']['height'], batch_size=cfg['main']['batch_size'],\
+            n_blobs=cfg['main']['n_blobs'], n_pheromones=cfg['base']['n_pheromones'], visualise=False,\
+            n_steps=cfg["main"]["n_steps"], model_path=model_path, n_prev=cfg['base']['n_prev'])
 
-    base.setup()
-    model = torch.load('model/model.pt', map_location=torch.device('cpu'))
-    base.agent.model.load_state_dict(model)
+base.setup()
+model = torch.load('model/model.pt', map_location=torch.device('cpu'))
+base.agent.model.load_state_dict(model)
 
-    a = AnimatedScatter(base=base)
-    plt.show()
+a = AnimatedScatter(base=base)
+plt.show()

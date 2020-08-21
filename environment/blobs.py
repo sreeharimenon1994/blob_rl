@@ -46,8 +46,8 @@ class Blobs:
         # self.jump = jump
         jump = 1.0
         # self.jump = 1.0
-        x, y = (jump * np.cos(rotation * 2 * np.pi),\
-                jump * np.sin(rotation * 2 * np.pi))
+        x, y = (jump * np.cos(self.rotation * 2 * np.pi),\
+                jump * np.sin(self.rotation * 2 * np.pi))
 
         x1 = (self.xyfa[:, 0, 0] + x).round()
         y1 = (self.xyfa[:, 0, 1] + y).round()
