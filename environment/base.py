@@ -81,9 +81,9 @@ class Base:
                 # jump = jump.detach().cpu().numpy().reshape(1, -1)
                 pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
                 pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
-            rotation = rotation - 3//2
+            rotation = rotation - 5//2
         else:
-            rotation = np.random.randint(low=0, high=3, size=self.n_blobs) - 5//2
+            rotation = np.random.randint(low=0, high=5, size=self.n_blobs) - 5//2
             # jump = np.random.random(size=self.n_blobs) * self.jump_strength
             pick_drop = np.random.randint(low=0, high=3, size=self.n_blobs)
             pheromones = np.random.randint(low=0, high=self.n_pheromones, size=self.n_blobs)
@@ -98,7 +98,7 @@ class Base:
         # rotation, jump, pick_drop, pheromones = self.choose_action(state)
         rotation, pick_drop, pheromones = self.choose_action(state)
         self.blobs.xyfa[:, 1, 1] = pick_drop
-        self.blobs.update_pos(rotation=rotation * 0.16355283, jump=1)
+        self.blobs.update_pos(rotation=rotation * 0.25, jump=1)
         self.blobs.update_pheromones(pheromones=pheromones)
 
         self.observation_aggregate()
