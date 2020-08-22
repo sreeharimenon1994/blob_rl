@@ -6,7 +6,7 @@ import torch
 from environment.base import Base
 import time
 
-delay = 0.1
+delay = 0.05
 
 
 class AnimatedScatter(object):
@@ -51,8 +51,8 @@ class AnimatedScatter(object):
             s = np.ones(self.numpoints) * 100.0
             c = np.ones(self.numpoints) * .25
 
-            # if ind % 50000 == 0:
-            #     print(self.base.food.xy.sum())
+            if ind % 500000 == 0:
+                print(self.base.food.xy.sum())
 
             tmp = self.base.food.visualise_food()
             xy = np.append(xy, (np.dstack((tmp[0], tmp[1])))[0] + 0.1, axis=0)
