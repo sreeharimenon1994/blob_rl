@@ -12,7 +12,7 @@ class Memory:
 
         self.state = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.new_state = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
-        self.action = np.zeros((self.mem_size, 3), dtype=np.int32)
+        self.action = np.zeros((self.mem_size, 2), dtype=np.int32)
         self.reward = np.zeros(self.mem_size, dtype=np.float32)
         self.stack_overflow_flag = False
         self.done = np.zeros(self.mem_size, dtype=np.bool)
