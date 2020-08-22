@@ -38,8 +38,8 @@ class Blobs:
         # arr = np.append(arr, self.jump.reshape(-1, 1), axis=1)
         arr = np.append(arr, self.xyfa[:, 1, 0].reshape(-1, 1), axis=1)
         arr = np.append(arr, self.xyfa[:, 1, 1].reshape(-1, 1)/3, axis=1)
-        tmp = self.restricted_area.observation(pos)
-        arr = np.append(arr, tmp, axis=1)
+        # tmp = self.restricted_area.observation(pos)
+        # arr = np.append(arr, tmp, axis=1)
         # arr = np.append(arr, self.extra[:, 0].reshape(-1, 1), axis=1)
 
         return arr

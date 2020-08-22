@@ -6,7 +6,7 @@ import torch
 from environment.base import Base
 import time
 
-delay = 0.02
+delay = 0.1
 
 
 class AnimatedScatter(object):
@@ -51,8 +51,8 @@ class AnimatedScatter(object):
             s = np.ones(self.numpoints) * 100.0
             c = np.ones(self.numpoints) * .25
 
-            if ind % 50000 == 0:
-                print(self.base.food.xy.sum())
+            # if ind % 50000 == 0:
+            #     print(self.base.food.xy.sum())
 
             tmp = self.base.food.visualise_food()
             xy = np.append(xy, (np.dstack((tmp[0], tmp[1])))[0] + 0.1, axis=0)
@@ -96,8 +96,9 @@ base = Base(epsilon=cfg['base']['epsilon'], eps_dec=cfg['base']['eps_dec'], padd
             n_steps=cfg["main"]["n_steps"], model_path=model_path, n_prev=cfg['base']['n_prev'])
 
 base.setup()
-model = torch.load('model/model.pt', map_location=torch.device('cpu'))
-base.agent.model.load_state_dict(model)
+model_param = torch.load('model/model.pt', map_location=torch.device('cpu'))
+base.agent.model.load_state_dict(model_param)
+base.agent.target.load_state_dict(model_param)
 
 a = AnimatedScatter(base=base)
 plt.show()
