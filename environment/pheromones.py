@@ -32,7 +32,7 @@ class Pheromones:
         self.xy[self.xy < 0] = 0
 
     def observation(self, pos, rotation):
-        arr = self.perception.perceive_data(self.xy, pos + self.pos_surround, rotation)
+        arr = self.perception.perceive_data(self.xy, pos + self.padding, rotation)
         return arr
 
     def add(self, pos):
