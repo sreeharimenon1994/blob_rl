@@ -19,7 +19,7 @@ class Food:
         return self.xy
 
     def observation(self, pos, rotation):
-        arr = self.perception.perceive_data(self.xy, pos, rotation)
+        arr = self.perception.perceive_data(self.xy, pos + self.pos_surround, rotation)
         return arr
 
     def reset(self):

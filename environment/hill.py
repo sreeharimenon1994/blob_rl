@@ -21,6 +21,6 @@ class Hill:
         #                i[1]:i[1] + self.pos_surround + 1].reshape(1,-1)
         #     arr = np.vstack([arr, tmp])
         # # arr = arr.reshape(1, -1)
-        arr = self.perception.perceive_data(self.xy, pos, rotation)
+        arr = self.perception.perceive_data(self.xy, pos + self.pos_surround, rotation)
         return arr
         

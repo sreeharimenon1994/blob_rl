@@ -8,7 +8,7 @@ class Exploitation:
         self.blobs = blobs
         self.xy = np.ones([w, h], dtype=np.int) * 1 # explore reward
         self.discount = 1.0
-        self.discount_dec = 0 # 0.0025
+        self.discount_dec = 0.0025
 
     def calculate(self):
         s = self.xy[self.blobs.xyfa[:, 0, 0], self.blobs.xyfa[:, 0, 1]] * self.discount

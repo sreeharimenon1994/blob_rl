@@ -44,6 +44,7 @@ class AnimatedScatter(object):
         ind = 0
         while True:
             self.base.step()
+            self.base.learn()
             time.sleep(delay)
 
             xy = self.base.blobs.visualise_blobs()
@@ -91,7 +92,7 @@ model_path = 'model/model.pt'
 base = Base(epsilon=cfg['base']['epsilon'], eps_dec=cfg['base']['eps_dec'], padding=cfg['main']['padding'],\
             eps_min=cfg['base']['eps_min'], lr=cfg['base']['lr'], gamma=cfg['base']['gamma'],\
             w=cfg['main']['width'], h=cfg['main']['height'], batch_size=cfg['main']['batch_size'],\
-            n_blobs=cfg['main']['n_blobs'], n_pheromones=cfg['base']['n_pheromones'], visualise=False,\
+            n_blobs=cfg['main']['n_blobs'], n_pheromones=cfg['base']['n_pheromones'], visualise=True,\
             n_steps=cfg["main"]["n_steps"], model_path=model_path, n_prev=cfg['base']['n_prev'])
 
 base.setup()
