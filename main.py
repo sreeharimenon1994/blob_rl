@@ -27,8 +27,6 @@ def main(cfg, model_path):
         base.epsilon = max(0.01,  min(1.0, 1.0 - math.log10((x+1)/2)))
         base.reset()
 
-        if x % 20 == 0:
-            base.agent.save_model(i=x, temp=True)
     base.agent.save_model()
 
 
@@ -38,9 +36,11 @@ if __name__ == "__main__":
         cfg['base']['epsilon'] += cfg['base']['n_prev'] * cfg['base']['eps_dec']
         f.close()
 
-    try:
-        model_path = 'model/model.pt'
-        model_path = os.path.dirname(os.path.abspath(model_path))
-    except:
-        model_path = ''
+    # try:
+    #     model_path = 'model/model.pt'
+    #     model_path = os.path.dirname(os.path.abspath(model_path))
+    #     print(model_path, 'model_path')
+    # except:
+    #     print('falied to load')
+    model_path = ''
     main(cfg, model_path) 

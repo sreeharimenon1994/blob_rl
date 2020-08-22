@@ -18,18 +18,18 @@ class Agent:
         self.eps_min = eps_min
         self.batch_size = batch_size
         self.gamma = gamma
-        self.input_size = 139 * n_prev
+        self.input_size = 148 * n_prev
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = Model(input_size=self.input_size, rotation=5,\
                            n_pheromones=self.n_pheromones, batch_size=batch_size)
         self.target = Model(input_size=self.input_size, rotation=5,\
                            n_pheromones=self.n_pheromones, batch_size=batch_size)
-        try:
-            model_params = torch.load(model_path, map_location=self.device)
-            self.model.load_state_dict(model_params)
-        except:
-            print('invalid path:', model_path)
-        self.target.load_state_dict(self.model.state_dict())
+        # try:
+        #     model_params = torch.load(model_path, map_location=self.device)
+        #     self.model.load_state_dict(model_params)
+        # except:
+        #     print('invalid path:', model_path)
+        # self.target.load_state_dict(self.model.state_dict())
         self.target.eval()
 
         self.memory = Memory(input_dims=[self.input_size], batch_size=self.batch_size,\
@@ -88,17 +88,18 @@ class Agent:
         loss = loss_1 + loss_2 + loss_4
         self.optimizer.zero_grad()
         loss.backward()
-        self.reward_mean = torch.mean(reward_batch)
-        self.loss_mean = loss.item()
+        # self.reward_mean = torch.mean(reward_batch)
+        # self.loss_mean = loss.item()
         
         for param in self.model.parameters():
             param.grad.data.clamp_(-1, 1)
         
         self.optimizer.step()
 
-        self.iter_cntr += 1
-        if self.iter_cntr % self.replace_target == 0:
-            self.target.load_state_dict(self.model.state_dict())
+        # self.iter_cntr += 1
+        # if self.iter_cntr % self.replace_target == 0:
+            # print('model replaced')
+            # self.target.load_state_dict(self.model.state_dict())
 
     def reset(self, epsilon):
         self.epsilon = epsilon

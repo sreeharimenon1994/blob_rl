@@ -38,6 +38,8 @@ class Blobs:
         # arr = np.append(arr, self.jump.reshape(-1, 1), axis=1)
         arr = np.append(arr, self.xyfa[:, 1, 0].reshape(-1, 1), axis=1)
         arr = np.append(arr, self.xyfa[:, 1, 1].reshape(-1, 1)/3, axis=1)
+        tmp = self.restricted_area.observation(pos)
+        arr = np.append(arr, tmp, axis=1)
         # arr = np.append(arr, self.extra[:, 0].reshape(-1, 1), axis=1)
 
         return arr
@@ -45,6 +47,7 @@ class Blobs:
     def update_pos(self, rotation, jump):
         self.rotation += rotation
         self.rotation = self.rotation % 1
+        # print(self.rotation)
         # self.jump = jump
         jump = 1.0
         # self.jump = 1.0

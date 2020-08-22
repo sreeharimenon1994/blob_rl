@@ -45,6 +45,7 @@ class Base:
         self.blobs.reset()
         self.food.reset()
         self.agent.reset(epsilon=self.epsilon)
+        self.agent.target.load_state_dict(self.agent.model.state_dict())
 
     def setup(self):
         self.blobs = Blobs(n_blobs=self.n_blobs, w=self.w, h=self.h, padding=self.padding, n_steps=self.n_steps)
@@ -92,7 +93,7 @@ class Base:
 
     def step(self):
         self.step_cntr += 1
-        done = True
+        done = False
 
         state = self.observation.copy()
         # rotation, jump, pick_drop, pheromones = self.choose_action(state)
@@ -109,7 +110,7 @@ class Base:
         # reward = np.array([2.0, 3.0])
         # print('\n',reward.sum(), '\nfood sum ------>', self.food.xy[padding: -padding, padding: -padding].sum(), '\n\n')
         if self.step_cntr == self.done_steps:
-            done = False
+            done = True
 
         if len(self.agent.prev_observation) == self.n_prev:
             action = np.dstack((rotation, pick_drop, pheromones))
