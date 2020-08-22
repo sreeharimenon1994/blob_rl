@@ -1,4 +1,5 @@
 import numpy as np
+from .perception import Perception
 
 class Food:
     """docstring for Food"""
@@ -11,22 +12,14 @@ class Food:
         self.pos_surround = 2 * self.padding + 1
         self.xy = None
         self.reset()
+        self.perception = Perception()
 
     @property
     def pos_count(self):
         return self.xy
 
-    def observation(self, pos):
-        # arr_tmp = np.log(self.xy + 1)
-        # arr_tmp = arr_tmp / np.linalg.norm(arr_tmp)
-        arr_tmp = self.xy
-        arr = arr_tmp[pos[0][0]:pos[0][0] + self.pos_surround,\
-                   pos[0][1]:pos[0][1] + self.pos_surround].reshape(1,-1)
-        for i in pos[1:]:
-            tmp = arr_tmp[i[0]:i[0] + self.pos_surround,\
-                       i[1]:i[1] + self.pos_surround].reshape(1,-1)
-            arr = np.vstack([arr, tmp])
-        # arr += 1 # eliminating values close to zero
+    def observation(self, pos, rotation):
+        arr = self.perception.perceive_data(self.xy, pos, rotation)
         return arr
 
     def reset(self):

@@ -1,7 +1,6 @@
 import numpy as np
 from .restricted_area import Restricted_Area
-# padding = 2
-# pos_surround = 2 * padding
+from .perception import Perception
 
 class Blobs:
     """docstring for Blobs"""
@@ -23,26 +22,29 @@ class Blobs:
         self.pheromones = []
         self.restricted_area = Restricted_Area(w=self.w, h=self.h)
         self.reset()
+        self.perception = Perception()
 
     def add_pheromones(self, pheromones):
         self.pheromones.append(pheromones)
 
     def observation(self):
         pos = self.xyfa[:, 0]
-        arr = self.pheromones[0].observation(pos)
+        # arr = self.pheromones[0].observation(pos)
+        arr = self.pheromones[0].observation(pos, self.rotation)
         for i in self.pheromones[1:]:
-            tmp = i.observation(pos)
+            tmp = i.observation(pos, self.rotation)
             arr = np.append(arr, tmp, axis=1)
         arr = np.append(arr, self.rotation.reshape(-1, 1), axis=1)
-        arr = np.append(arr, self.jump.reshape(-1, 1), axis=1)
+        # arr = np.append(arr, self.jump.reshape(-1, 1), axis=1)
         arr = np.append(arr, self.xyfa[:, 1, 0].reshape(-1, 1), axis=1)
         arr = np.append(arr, self.xyfa[:, 1, 1].reshape(-1, 1)/3, axis=1)
-        arr = np.append(arr, self.extra[:, 0].reshape(-1, 1), axis=1)
+        # arr = np.append(arr, self.extra[:, 0].reshape(-1, 1), axis=1)
 
         return arr
 
     def update_pos(self, rotation, jump):
         self.rotation += rotation
+        self.rotation = self.rotation % 1
         # self.jump = jump
         jump = 1.0
         # self.jump = 1.0

@@ -62,9 +62,9 @@ class Base:
 
     def observation_aggregate(self):
         xy = self.blobs.xyfa[:, 0]
-        food = self.food.observation(xy)
+        food = self.food.observation(xy, self.blobs.rotation)
         blobs = self.blobs.observation()
-        hill = self.hill.observation(xy)
+        hill = self.hill.observation(xy, self.blobs.rotation)
         obs = np.append(blobs, hill, axis=1)
         obs = np.append(obs, food, axis=1)
 

@@ -1,4 +1,6 @@
 import numpy as np
+from .perception import Perception
+
 np.seterr(divide='ignore', invalid='ignore')
 
 class Pheromones:
@@ -12,6 +14,7 @@ class Pheromones:
         self.padding = padding
         self.pos_surround = 2 * self.padding
         self.xy = np.zeros([self.w + self.pos_surround, self.h + self.pos_surround])
+        self.perception = Perception()
 
     @property
     def xy_pos_count(self, pos):
@@ -28,15 +31,8 @@ class Pheromones:
         self.xy = self.xy - 0.00002
         self.xy[self.xy < 0] = 0
 
-    def observation(self, pos):
-        arr_tmp = self.xy
-        arr = arr_tmp[pos[0][0]:pos[0][0] + self.pos_surround + 1,\
-                   pos[0][1]:pos[0][1] + self.pos_surround + 1].reshape(1,-1)
-        for i in pos[1:]:
-            tmp = arr_tmp[i[0]:i[0] + self.pos_surround + 1,\
-                       i[1]:i[1] + self.pos_surround + 1].reshape(1,-1)
-            arr = np.vstack([arr, tmp])
-        # arr += 1 # eliminating values  close to zero
+    def observation(self, pos, rotation):
+        arr = self.perception.perceive_data(self.xy, pos, rotation)
         return arr
 
     def add(self, pos):
