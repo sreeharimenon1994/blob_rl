@@ -78,7 +78,7 @@ class Base:
             with torch.no_grad():
                 # rotation, pheromones, jump, pick_drop = self.agent.target.forward(state)
                 rotation, pheromones = self.agent.target.forward(state)
-                print(rotation)
+                # print(rotation)
                 rotation = (torch.argmax(rotation, dim=1).detach().cpu().numpy()).ravel() 
                 # jump = jump.detach().cpu().numpy().reshape(1, -1)
                 pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
