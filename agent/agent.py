@@ -38,10 +38,10 @@ class Agent:
                              mem_size_per_agent=5000, n_blobs=n_blobs)
         self.prev_observation = Prev_Observation(n_prev=n_prev)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        # self.criterion_1 = nn.MSELoss()
-        self.criterion_1 = nn.SmoothL1Loss()
+        self.criterion_1 = nn.MSELoss()
+        # self.criterion_1 = nn.SmoothL1Loss()
         self.iter_cntr = 0
-        self.replace_target = 1950
+        self.replace_target = 200 #1950
         self.batch_list = np.arange(self.batch_size)
         self.loss_mean = 0.0
         self.reward_mean = 0.0
@@ -57,7 +57,6 @@ class Agent:
         new_state_batch = torch.tensor(new_state_batch).to(self.device)
         reward_batch = torch.tensor(reward_batch).to(self.device)
         done_batch = torch.tensor(done_batch).to(self.device)
-        done_batch = done_batch.reshape(-1, 1)
 
         # rotation, pheromone, pickup_drop = self.model.forward(state_batch)
         rotation, pheromone = self.model.forward(state_batch)
@@ -72,8 +71,8 @@ class Agent:
         #                                                  pickup_drop_t.detach().clone()
 
         rotation_t, pheromone_t = self.target.forward(new_state_batch)
-        pheromone_t = torch.max(pheromone_t, dim=1)[0].reshape(-1, 1)
-        rotation_t = torch.max(rotation_t, dim=1)[0].reshape(-1, 1)
+        pheromone_t = torch.max(pheromone_t, dim=1)[0]
+        rotation_t = torch.max(rotation_t, dim=1)[0]
         
         # rotation_t, pheromone_t = rotation_t.detach().cpu().numpy(), pheromone_t.detach().cpu().numpy()
 
@@ -90,7 +89,7 @@ class Agent:
         # jump_t = reward_batch + jump_t * self.gamma
         pheromone_t = reward_batch + pheromone_t * self.gamma * ~done_batch
         # pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
-        # print(rotation.shape , rotation_t.shape)
+        print(reward_batch.shape , rotation_t.shape)
         
 
 
@@ -111,10 +110,10 @@ class Agent:
         
         self.optimizer.step()
 
-        # self.iter_cntr += 1
-        # if self.iter_cntr % self.replace_target == 0:
-            # print('model replaced')
-            # self.target.load_state_dict(self.model.state_dict())
+        self.iter_cntr += 1
+        if self.iter_cntr % self.replace_target == 0:
+            print('model replaced')
+            self.target.load_state_dict(self.model.state_dict())
 
     def reset(self, epsilon):
         self.epsilon = epsilon
