@@ -55,48 +55,43 @@ class Agent:
 
         state_batch = torch.tensor(state_batch).to(self.device)
         new_state_batch = torch.tensor(new_state_batch).to(self.device)
-        reward_batch = torch.tensor(reward_batch).to(self.device)
+        reward_batch = torch.tensor(reward_batch).to(self.device).reshape(1, -1)
         done_batch = torch.tensor(done_batch).to(self.device)
 
-        # rotation, pheromone, pickup_drop = self.model.forward(state_batch)
-        rotation, pheromone = self.model.forward(state_batch)
+        with torch.no_grad():
+            # rotation, pheromone, pickup_drop = self.model.forward(state_batch)
+            rotation, pheromone = self.model.forward(state_batch)
 
-        rotation = rotation[self.batch_list, action_batch[:, 0]].reshape(-1, 1)
-        # pickup_drop = pickup_drop[self.batch_list, action_batch[:, 1]].reshape(-1, 1)
-        pheromone = pheromone[self.batch_list, action_batch[:, 1]].reshape(-1, 1)
+            rotation_t, pheromone_t = self.target.forward(new_state_batch)
+            pheromone_t = torch.max(pheromone_t, dim=1).values
+            rotation_t = torch.max(rotation_t, dim=1).values
 
-        # rotation_t, pheromone_t, pickup_drop_t = self.target.forward(new_state_batch)
-        # rotation_t, pheromone_t, pickup_drop_t = rotation_t.detach().clone(),\
-        #                                                  pheromone_t.detach().clone(),\
-        #                                                  pickup_drop_t.detach().clone()
+            # print(rotation_t.shape, rotation.shape, action_batch.shape)
+            # print('reward_batch', reward_batch.shape)
+            # print('\ndone_batch', done_batch.shape)
+            # print('\nrotation_t * ~done_batch', (rotation_t * ~done_batch).shape, '\n\n\n\n')
 
-        rotation_t, pheromone_t = self.target.forward(new_state_batch)
-        pheromone_t = torch.max(pheromone_t, dim=1)[0]
-        rotation_t = torch.max(rotation_t, dim=1)[0]
+            rotation_t = reward_batch + self.gamma * rotation_t * ~done_batch
+            pheromone_t = reward_batch + self.gamma * pheromone_t * ~done_batch
+            
+            # print(rotation_t.shape, rotation.shape)
+
+            rotation[self.batch_list, action_batch[:, 0]] = rotation_t
+            pheromone[self.batch_list, action_batch[:, 1]] = pheromone_t
+            # rotation = rotation.reshape(-1, 1)
+            # pheromone = pheromone.reshape(-1, 1)
+
+
+            # rotation = rotation[self.batch_list, action_batch[:, 0]].reshape(-1, 1)
+            # pheromone = pheromone[self.batch_list, action_batch[:, 1]].reshape(-1, 1)
+
+
+            # pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
         
-        # rotation_t, pheromone_t = rotation_t.detach().cpu().numpy(), pheromone_t.detach().cpu().numpy()
-
-        # pheromone_t = torch.max(pheromone_t, dim=1)[0].values()
-        # rotation_t = torch.max(rotation_t, dim=1)[0].values()
-        # pickup_drop_t = torch.max(pickup_drop_t, dim=1)[0].reshape(-1, 1)
-        # print(type(rotation_t), 'rotation_t\n\n')
-        # rotation_t[done_batch] = 0.0
-        # jump_t[done_batch] = 0.0
-        # pheromone_t[done_batch] = 0.0
-        # pickup_drop_t[done_batch] = 0.0
-        # print('\n', done_batch.shape)
-        rotation_t = reward_batch + rotation_t * self.gamma * ~done_batch
-        # jump_t = reward_batch + jump_t * self.gamma
-        pheromone_t = reward_batch + pheromone_t * self.gamma * ~done_batch
-        # pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
-        # print(reward_batch.shape , rotation_t.shape)
-        
-
-
-
-
-        loss_1 = self.criterion_1(rotation, rotation_t)
-        loss_2 = self.criterion_1(pheromone, pheromone_t)
+        output = self.model.forward(state_batch)        
+        # print(output[0].shape, 'poli\n')
+        loss_1 = self.criterion_1(output[0], rotation)
+        loss_2 = self.criterion_1(output[1], pheromone)
         # loss_3 = self.criterion_1(jump, jump_t)
         # loss_4 = self.criterion_1(pickup_drop, pickup_drop_t)
         loss = loss_1 + loss_2

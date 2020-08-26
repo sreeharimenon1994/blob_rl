@@ -117,7 +117,7 @@ class Base:
             done = True
 
         if len(self.agent.prev_observation) == self.n_prev:
-            action = np.dstack((rotation, pheromones))
+            action = np.dstack((rotation + 2, pheromones))
             self.agent.memory.store(state=state, action=action, reward=reward, state_=new_state, done=done)
 
     def learn(self):
