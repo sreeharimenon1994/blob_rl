@@ -4,7 +4,7 @@ from torch import nn
 class Model(nn.Module):
     def __init__(self, input_size, rotation, n_pheromones, batch_size):
         super(Model, self).__init__()
-        power = 5
+        power = 3
 
         # total_outs = [rotation, n_pheromones, 3] # rot, phe, pick
         total_outs = [rotation, n_pheromones] # rot, phe, pick
