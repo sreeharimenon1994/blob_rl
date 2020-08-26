@@ -1,4 +1,4 @@
-from .model import Model
+#from .model import Model
 from .memory import Memory, Prev_Observation
 from .model import Model
 import torch
@@ -89,7 +89,7 @@ class Agent:
         # jump_t = reward_batch + jump_t * self.gamma
         pheromone_t = reward_batch + pheromone_t * self.gamma * ~done_batch
         # pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
-        print(reward_batch.shape , rotation_t.shape)
+        # print(reward_batch.shape , rotation_t.shape)
         
 
 
@@ -112,7 +112,7 @@ class Agent:
 
         self.iter_cntr += 1
         if self.iter_cntr % self.replace_target == 0:
-            print('model replaced')
+            # print('model replaced')
             self.target.load_state_dict(self.model.state_dict())
 
     def reset(self, epsilon):
