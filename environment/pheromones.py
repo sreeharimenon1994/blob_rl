@@ -10,7 +10,7 @@ class Pheromones:
         self.color = color
         self.w = w
         self.h = h
-        self.max = 1
+        self.max = 2
         self.padding = padding
         self.pos_surround = 2 * self.padding
         self.xy = np.zeros([self.w + self.pos_surround, self.h + self.pos_surround])
