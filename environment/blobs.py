@@ -62,16 +62,20 @@ class Blobs:
         x1[x1 > self.h - 1] = self.h - 1
         y1[y1 > self.w - 1] = self.w - 1
 
-        restricted = self.restricted_area.xy[x1.astype(np.int), y1.astype(np.int)]
-        not_restricted = np.invert(restricted.astype(np.bool))
 
-        self.xyfa[:, 0 , 0] = x1 * not_restricted + self.xyfa[:, 0 , 0] * restricted
-        self.xyfa[:, 0 , 1] = y1 * not_restricted + self.xyfa[:, 0 , 1] * restricted
-        self.xyfa[self.xyfa[:, 0, 0] < 0, 0, 0] = 0
-        self.xyfa[self.xyfa[:, 0, 1] < 0, 0, 1] = 0
+        self.xyfa[:, 0 , 0] = x1
+        self.xyfa[:, 0 , 1] = y1
+
+        # restricted = self.restricted_area.xy[x1.astype(np.int), y1.astype(np.int)]
+        # not_restricted = np.invert(restricted.astype(np.bool))
+
+        # self.xyfa[:, 0 , 0] = x1 * not_restricted + self.xyfa[:, 0 , 0] * restricted
+        # self.xyfa[:, 0 , 1] = y1 * not_restricted + self.xyfa[:, 0 , 1] * restricted
+        # self.xyfa[self.xyfa[:, 0, 0] < 0, 0, 0] = 0
+        # self.xyfa[self.xyfa[:, 0, 1] < 0, 0, 1] = 0
         
-        self.xyfa[self.xyfa[:, 0, 0] > self.h - 1] = self.h - 1
-        self.xyfa[self.xyfa[:, 0, 1] > self.w - 1] = self.w - 1
+        # self.xyfa[self.xyfa[:, 0, 0] > self.h - 1] = self.h - 1
+        # self.xyfa[self.xyfa[:, 0, 1] > self.w - 1] = self.w - 1
 
         # self.extra[0] -= 0.0002
         # if self.extra[0] < .4:
@@ -89,10 +93,10 @@ class Blobs:
 
     def reset(self):
         self.xyfa = np.ones([self.n_blobs, 3, 2], dtype=np.int)
-        self.xyfa[:, 0, 0] = np.random.randint(low=10, high=40, size=self.n_blobs)
-        self.xyfa[:, 0, 1] = np.random.randint(low=10, high=40, size=self.n_blobs)
+        # self.xyfa[:, 0, 0] = np.random.randint(low=10, high=40, size=self.n_blobs)
+        # self.xyfa[:, 0, 1] = np.random.randint(low=10, high=40, size=self.n_blobs)
         self.xyfa[:,1] = 0
-        self.xyfa[:,0] = 3
+        self.xyfa[:,0] = 8
         self.xy = np.zeros([self.w, self.h], dtype=np.int)
         self.xy = np.pad(self.xy, int(self.padding/2), 'constant', constant_values=-1)
         for x in self.pheromones:

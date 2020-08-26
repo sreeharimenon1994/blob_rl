@@ -32,26 +32,27 @@ class Food_Reward:
         fx = self.blobs.xyfa[:, 0, 0] + self.padding
         fy = self.blobs.xyfa[:, 0, 1] + self.padding
         f = self.food.xy[fx, fy].astype(np.bool)
-        
-        # bf = self.blobs.xyfa[:, 1, 0] # blob food status
-        # ba = self.blobs.xyfa[:, 1, 1] # blob action status
+        e = np.invert(self.blobs.xyfa[:, 1, 0].astype(np.bool))
 
-        # r1 = np.bitwise_and(np.bitwise_and(ba == 1, bf == 0), f)
-        tmp = np.where(f)
+        fe = np.bitwise_and(f, e)
+
+        tmp = np.where(fe)
+        # print(tmp)
         self.food.xy[fx[tmp], fy[tmp]] -= self.single_food
         self.blobs.xyfa[tmp, 1, 0] = 1
 
-        r1 = f.astype(np.int) * 2 # picking food
+        r1 = fe.astype(np.int) * 2 # picking food
 
-        # r2 = np.bitwise_and(ba == 2, bf == 1)
-        # tmp = np.where(r2)
-        # self.food.xy[fx[tmp], fy[tmp]] += self.single_food
-        # self.blobs.xyfa[tmp, 1, 0] = 0
-        # r2 = r2.astype(np.int) * -2 # dropping food
+        dist = np.sqrt((self.blobs.xyfa[:, 0, 0] - 8)**2 + (self.blobs.xyfa[:, 0, 1] - 8)**2)
+        tmp = self.blobs.extra[:, 1] > dist
+        r4 = tmp * 5.0 * self.blobs.xyfa[:, 1, 0]
+        # print(r4, dist, tmp, self.blobs.xyfa[:, 1, 0])
+        self.blobs.extra[:, 1] = dist
 
-        h = self.hill.xy[fx, fy].astype(np.bool)
+        r5 = self.blobs.xyfa[:, 1, 0] * 1
+
         g = self.blobs.xyfa[:, 1, 0].astype(np.bool)
-
+        h = self.hill.xy[fx, fy].astype(np.bool)
         gh = np.bitwise_and(g, h)
         if np.any(gh):
             tmp = np.where(gh)
@@ -64,13 +65,6 @@ class Food_Reward:
         else:
             r3 = np.zeros(self.blobs.n_blobs)
 
-        dist = np.sqrt((self.blobs.xyfa[:, 0, 0] - 8)**2 + (self.blobs.xyfa[:, 0, 1] - 8)**2)
-        tmp = self.blobs.extra[:, 1] > dist
-        r4 = tmp * 3.0 * self.blobs.xyfa[:, 1, 0]
-        # print(r4, dist, tmp, self.blobs.xyfa[:, 1, 0])
-        self.blobs.extra[:, 1] = dist
-
-        r5 = self.blobs.xyfa[:, 1, 0] * 1
         return r1 + r3 + r4 + r5
 
 

@@ -31,20 +31,21 @@ class Agent:
         #     self.model.load_state_dict(model_params)
         # except:
         #     print('invalid path:', model_path)
-        # self.target.load_state_dict(self.model.state_dict())
+
+        self.target.load_state_dict(self.model.state_dict())
         self.target.eval()
 
         self.memory = Memory(input_dims=[self.input_size], batch_size=self.batch_size,\
                              mem_size_per_agent=5000, n_blobs=n_blobs)
         self.prev_observation = Prev_Observation(n_prev=n_prev)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        self.criterion_1 = nn.MSELoss()
-        # self.criterion_1 = nn.SmoothL1Loss()
+        # self.criterion_1 = nn.MSELoss()
+        self.criterion_1 = nn.SmoothL1Loss()
         self.iter_cntr = 0
-        self.replace_target = 200 #1950
+        self.replace_target = 1990
         self.batch_list = np.arange(self.batch_size)
-        self.loss_mean = 0.0
-        self.reward_mean = 0.0
+        # self.loss_mean = 0.0
+        # self.reward_mean = 0.0
 
     def train(self):
         max_mem = len(self.memory)
@@ -91,14 +92,15 @@ class Agent:
         # self.reward_mean = torch.mean(reward_batch)
         # self.loss_mean = loss.item()
         
-        # for param in self.model.parameters():
-        #     param.grad.data.clamp_(-1, 1)
+        for param in self.model.parameters():
+            param.grad.data.clamp_(-1, 1)
         
         self.optimizer.step()
 
         self.iter_cntr += 1
-        if self.iter_cntr % self.replace_target == 0:
+        if self.iter_cntr == self.replace_target:
             # print('model replaced')
+            self.iter_cntr = 0
             self.target.load_state_dict(self.model.state_dict())
 
     def reset(self, epsilon):
