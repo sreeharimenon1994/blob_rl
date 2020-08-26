@@ -1,5 +1,5 @@
 import numpy as np
-restriction = 1
+restriction = 3
 from .perception import Perception
 
 
@@ -9,7 +9,7 @@ class Restricted_Area:
         super(Restricted_Area, self).__init__()
         self.w = w
         self.h = h
-        self.xy = np.zeros([self.w-2, self.h-2])
+        self.xy = np.zeros([self.w-1, self.h-1])
         self.xy = np.pad(self.xy, restriction, 'constant', constant_values=1)
         self.perception = Perception()
 
