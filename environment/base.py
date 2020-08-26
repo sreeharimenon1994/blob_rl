@@ -75,14 +75,14 @@ class Base:
     def choose_action(self, state):
         if np.random.random() > self.agent.epsilon:
             state = torch.tensor(state).to(self.agent.device)
-            with torch.no_grad():
-                # rotation, pheromones, jump, pick_drop = self.agent.target.forward(state)
-                rotation, pheromones = self.agent.target.forward(state)
-                # print(rotation)
-                rotation = (torch.argmax(rotation, dim=1).detach().cpu().numpy()).ravel() 
-                # jump = jump.detach().cpu().numpy().reshape(1, -1)
-                pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
-                # pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
+            # with torch.no_grad():
+            # rotation, pheromones, jump, pick_drop = self.agent.target.forward(state)
+            rotation, pheromones = self.agent.target.forward(state)
+            # print(rotation)
+            rotation = (torch.argmax(rotation, dim=1).detach().cpu().numpy()).ravel() 
+            # jump = jump.detach().cpu().numpy().reshape(1, -1)
+            pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
+            # pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
             rotation = rotation - 5//2
             # print(rotation, 'model')
         else:

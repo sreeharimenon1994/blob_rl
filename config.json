@@ -13,7 +13,7 @@
         "eps_dec": 0.01,
         "eps_min": 0.01,
         "lr": 0.00001,
-        "n_pheromones": 3,
+        "n_pheromones": 2,
         "gamma": 0.99,
         "n_prev": 1
     }

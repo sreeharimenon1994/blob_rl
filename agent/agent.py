@@ -18,9 +18,10 @@ class Agent:
         self.eps_min = eps_min
         self.batch_size = batch_size
         self.gamma = gamma
-        self.input_size = 71 * n_prev
-        # self.input_size = 57 * n_prev
+        # self.input_size = 71 * n_prev
+        self.input_size = 121
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        # self.device = 'cpu'
         self.model = Model(input_size=self.input_size, rotation=5,\
                            n_pheromones=self.n_pheromones, batch_size=batch_size)
         self.target = Model(input_size=self.input_size, rotation=5,\
@@ -37,8 +38,8 @@ class Agent:
                              mem_size_per_agent=5000, n_blobs=n_blobs)
         self.prev_observation = Prev_Observation(n_prev=n_prev)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        self.criterion_1 = nn.MSELoss()
-        # self.criterion_1 = nn.SmoothL1Loss()
+        # self.criterion_1 = nn.MSELoss()
+        self.criterion_1 = nn.SmoothL1Loss()
         self.iter_cntr = 0
         self.replace_target = 1950
         self.batch_list = np.arange(self.batch_size)
@@ -56,6 +57,7 @@ class Agent:
         new_state_batch = torch.tensor(new_state_batch).to(self.device)
         reward_batch = torch.tensor(reward_batch).to(self.device)
         done_batch = torch.tensor(done_batch).to(self.device)
+        done_batch = done_batch.reshape(-1, 1)
 
         # rotation, pheromone, pickup_drop = self.model.forward(state_batch)
         rotation, pheromone = self.model.forward(state_batch)
@@ -70,21 +72,29 @@ class Agent:
         #                                                  pickup_drop_t.detach().clone()
 
         rotation_t, pheromone_t = self.target.forward(new_state_batch)
-        rotation_t, pheromone_t = rotation_t.detach().clone(), pheromone_t.detach().clone()
-
         pheromone_t = torch.max(pheromone_t, dim=1)[0].reshape(-1, 1)
         rotation_t = torch.max(rotation_t, dim=1)[0].reshape(-1, 1)
-        # pickup_drop_t = torch.max(pickup_drop_t, dim=1)[0].reshape(-1, 1)
         
-        rotation_t[done_batch] = 0.0
-        # jump_t[done_batch] = 0.0
-        pheromone_t[done_batch] = 0.0
-        # pickup_drop_t[done_batch] = 0.0
+        # rotation_t, pheromone_t = rotation_t.detach().cpu().numpy(), pheromone_t.detach().cpu().numpy()
 
-        rotation_t = reward_batch + rotation_t * self.gamma
+        # pheromone_t = torch.max(pheromone_t, dim=1)[0].values()
+        # rotation_t = torch.max(rotation_t, dim=1)[0].values()
+        # pickup_drop_t = torch.max(pickup_drop_t, dim=1)[0].reshape(-1, 1)
+        # print(type(rotation_t), 'rotation_t\n\n')
+        # rotation_t[done_batch] = 0.0
+        # jump_t[done_batch] = 0.0
+        # pheromone_t[done_batch] = 0.0
+        # pickup_drop_t[done_batch] = 0.0
+        # print('\n', done_batch.shape)
+        rotation_t = reward_batch + rotation_t * self.gamma * ~done_batch
         # jump_t = reward_batch + jump_t * self.gamma
-        pheromone_t = reward_batch + pheromone_t * self.gamma
+        pheromone_t = reward_batch + pheromone_t * self.gamma * ~done_batch
         # pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
+        # print(rotation.shape , rotation_t.shape)
+        
+
+
+
 
         loss_1 = self.criterion_1(rotation, rotation_t)
         loss_2 = self.criterion_1(pheromone, pheromone_t)
