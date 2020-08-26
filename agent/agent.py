@@ -18,8 +18,8 @@ class Agent:
         self.eps_min = eps_min
         self.batch_size = batch_size
         self.gamma = gamma
-        # self.input_size = 71 * n_prev
-        self.input_size = 121
+        self.input_size = 71 * n_prev
+        # self.input_size = 121
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         # self.device = 'cpu'
         self.model = Model(input_size=self.input_size, rotation=5,\
@@ -78,15 +78,6 @@ class Agent:
 
             rotation[self.batch_list, action_batch[:, 0]] = rotation_t
             pheromone[self.batch_list, action_batch[:, 1]] = pheromone_t
-            # rotation = rotation.reshape(-1, 1)
-            # pheromone = pheromone.reshape(-1, 1)
-
-
-            # rotation = rotation[self.batch_list, action_batch[:, 0]].reshape(-1, 1)
-            # pheromone = pheromone[self.batch_list, action_batch[:, 1]].reshape(-1, 1)
-
-
-            # pickup_drop_t = reward_batch + pickup_drop_t * self.gamma
         
         output = self.model.forward(state_batch)        
         # print(output[0].shape, 'poli\n')

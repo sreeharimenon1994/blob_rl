@@ -38,7 +38,7 @@ class Blobs:
         # arr = np.append(arr, self.jump.reshape(-1, 1), axis=1)
         # arr = np.append(arr, self.xyfa[:, 1, 0].reshape(-1, 1), axis=1)
         # arr = np.append(arr, self.xyfa[:, 1, 1].reshape(-1, 1)/3, axis=1)
-        tmp = self.restricted_area.observation(pos)
+        tmp = self.restricted_area.observation(pos, self.rotation)
         arr = np.append(arr, tmp, axis=1)
         # arr = np.append(arr, self.extra[:, 0].reshape(-1, 1), axis=1)
 
@@ -89,6 +89,8 @@ class Blobs:
 
     def reset(self):
         self.xyfa = np.ones([self.n_blobs, 3, 2], dtype=np.int)
+        self.xyfa[:, 0, 0] = np.random.randint(low=10, high=40, size=self.n_blobs)
+        self.xyfa[:, 0, 1] = np.random.randint(low=10, high=40, size=self.n_blobs)
         self.xyfa[:,1] = 0
         self.xyfa[:,0] = 3
         self.xy = np.zeros([self.w, self.h], dtype=np.int)
