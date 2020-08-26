@@ -7,7 +7,7 @@ class Exploitation:
         super(Exploitation, self).__init__()
         self.blobs = blobs
         self.xy = np.ones([w, h], dtype=np.int) * 1 # explore reward
-        self.discount = 1.0
+        self.discount = 3.0
         self.discount_dec = 0.0025
 
     def calculate(self):
@@ -64,12 +64,14 @@ class Food_Reward:
         else:
             r3 = np.zeros(self.blobs.n_blobs)
 
-        dist = np.sqrt(self.blobs.xyfa[:, 0, 0]**2 + self.blobs.xyfa[:, 0, 1]**2)
+        dist = np.sqrt((self.blobs.xyfa[:, 0, 0] - 8)**2 + (self.blobs.xyfa[:, 0, 1] - 8)**2)
         tmp = self.blobs.extra[:, 1] > dist
         r4 = tmp * 3.0 * self.blobs.xyfa[:, 1, 0]
         # print(r4, dist, tmp, self.blobs.xyfa[:, 1, 0])
         self.blobs.extra[:, 1] = dist
-        return r1 + r3 + r4
+
+        r5 = self.blobs.xyfa[:, 1, 0] * 1
+        return r1 + r3 + r4 + r5
 
 
 class Reward:

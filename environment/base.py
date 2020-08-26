@@ -78,13 +78,16 @@ class Base:
             with torch.no_grad():
                 # rotation, pheromones, jump, pick_drop = self.agent.target.forward(state)
                 rotation, pheromones = self.agent.target.forward(state)
+                print(rotation)
                 rotation = (torch.argmax(rotation, dim=1).detach().cpu().numpy()).ravel() 
                 # jump = jump.detach().cpu().numpy().reshape(1, -1)
                 pheromones = (torch.argmax(pheromones, dim=1).detach().cpu().numpy()).ravel()
                 # pick_drop = (torch.argmax(pick_drop, dim=1).detach().cpu().numpy()).reshape(1, -1)
             rotation = rotation - 5//2
+            # print(rotation, 'model')
         else:
             rotation = np.random.randint(low=0, high=5, size=self.n_blobs) - 5//2
+            # print(rotation, 'random')
             # jump = np.random.random(size=self.n_blobs) * self.jump_strength
             # pick_drop = np.random.randint(low=0, high=3, size=self.n_blobs)
             pheromones = np.random.randint(low=0, high=self.n_pheromones, size=self.n_blobs)
@@ -98,6 +101,7 @@ class Base:
         state = self.observation.copy()
         # rotation, jump, pick_drop, pheromones = self.choose_action(state)
         rotation, pheromones = self.choose_action(state)
+        # print(rotation, 'step funct')
         # self.blobs.xyfa[:, 1, 1] = pick_drop
         self.blobs.update_pos(rotation=rotation * 0.125, jump=1)
         self.blobs.update_pheromones(pheromones=pheromones)

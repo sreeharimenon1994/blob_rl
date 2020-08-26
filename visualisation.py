@@ -96,7 +96,7 @@ base = Base(epsilon=cfg['base']['epsilon'], eps_dec=cfg['base']['eps_dec'], padd
             n_steps=cfg["main"]["n_steps"], model_path=model_path, n_prev=cfg['base']['n_prev'])
 
 base.setup()
-model_param = torch.load('model/model.pt', map_location=torch.device('cpu'))
+model_param = torch.load(model_path, map_location=torch.device('cpu'))
 base.agent.model.load_state_dict(model_param)
 base.agent.target.load_state_dict(model_param)
 

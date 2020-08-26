@@ -19,6 +19,7 @@ class Agent:
         self.batch_size = batch_size
         self.gamma = gamma
         self.input_size = 71 * n_prev
+        # self.input_size = 57 * n_prev
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = Model(input_size=self.input_size, rotation=5,\
                            n_pheromones=self.n_pheromones, batch_size=batch_size)
@@ -95,8 +96,8 @@ class Agent:
         # self.reward_mean = torch.mean(reward_batch)
         # self.loss_mean = loss.item()
         
-        for param in self.model.parameters():
-            param.grad.data.clamp_(-1, 1)
+        # for param in self.model.parameters():
+        #     param.grad.data.clamp_(-1, 1)
         
         self.optimizer.step()
 

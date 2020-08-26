@@ -11,28 +11,26 @@ class Model(nn.Module):
 
         self.general = nn.Sequential(
                 nn.Linear(input_size, 2**(4 + power)),
-                nn.Linear(2**(4 + power), 2**(3 + power)),
-                nn.Linear(2**(3 + power), 2**(2 + power)),
-                nn.Linear(2**(2 + power), 2**(1 + power)),
-                nn.Linear(2**(1 + power), input_size) ).cuda()
+                nn.Linear(2**(4 + power), 2**(5 + power)),
+                nn.Linear(2**(5 + power), 2**(3 + power)),
+                nn.Linear(2**(3 + power), input_size) ).cuda()
 
         self.branch = nn.ModuleList([])
 
         for nout in total_outs:
             self.branch.append(nn.Sequential(
-                nn.Linear(input_size, 2**(3 + power)),
+                nn.Linear(input_size*2, 2**(3 + power)),
                 nn.Linear(2**(3 + power), 2**(2 + power)),
                 nn.Linear(2**(2 + power), 2**(1 + power)),
                 nn.Linear(2**(1+ power), nout)).cuda())
 
 
     def forward(self, state):
-        # print('state', state)
         general = self.general(state)
-
         outputs = []
+        inp = torch.cat([general, state], dim=1)
         for head in self.branch:
-            outputs.append(head(general))
+            outputs.append(head(inp))
 
         return outputs
 
