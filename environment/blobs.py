@@ -57,10 +57,10 @@ class Blobs:
         x1 = (self.xyfa[:, 0, 0] + x).round()
         y1 = (self.xyfa[:, 0, 1] + y).round()
         # print(x1.shape, y1.shape, '------->', x.shape, y.shape, '---------->', rotation, jump)
-        x1[x1 < 0] = 0
-        y1[y1 < 0] = 0
-        x1[x1 > self.h - 1] = self.h - 1
-        y1[y1 > self.w - 1] = self.w - 1
+        x1[x1 < 1] = 1
+        y1[y1 < 1] = 1
+        x1[x1 > self.h - 2] = self.h - 2
+        y1[y1 > self.w - 2] = self.w - 2
 
 
         self.xyfa[:, 0 , 0] = x1
