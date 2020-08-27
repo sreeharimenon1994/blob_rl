@@ -1,10 +1,10 @@
 {
     "main": {
-        "epochs": 100,
+        "epochs": 150,
         "n_steps": 2000,
         "width": 50,
         "height": 50,
-        "n_blobs": 10,
+        "n_blobs": 20,
         "batch_size": 256,
         "padding": 2
     },
